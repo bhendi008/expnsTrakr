@@ -1,0 +1,36 @@
+# created by virtualenv automatically
+# Python bytecode and cache
+*.pyc
+__pycache__/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Instance folder for local configuration/database
+instance/
+
+# Environment-specific configuration
+.env
+*.ini
+*.cfg
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Test-related files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build and distribution
+dist/
+build/
+*.egg-info/
+
+# Log files
+*.log
