@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, url_for, request
 from flask_wtf import FlaskForm
-from wtforms.validators import InputRequired, Length, ValidationError
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError, DataRequired
+from wtforms import StringField, PasswordField, SubmitField, SelectField
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required,current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -22,6 +22,15 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(250), unique=True, nullable=False)
     password = db.Column(db.String(250), nullable=False)
+
+class Transaction(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    transaction_name = db.Column(db.String(250))
+
+class transactionForm(FlaskForm):
+    transactionName = StringField("transaction_name")
+    submit = SubmitField("Add")
+    transactionType = SelectField('transaction type', choices=[], validators=[DataRequired()])
 
 class registerForm(FlaskForm):
     username = StringField(validators=(InputRequired(), Length(min=4,max=20)), render_kw={"placeholder":"username"}),
@@ -53,7 +62,7 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 @app.route("/")
-def home():
+def Home():
     return render_template("Home.html")
 
 @app.route('/Register', methods=["GET","POST"])
@@ -96,6 +105,24 @@ def Login():
 @login_required
 def Dashboard():
     return render_template("Dashboard.html", username=current_user.username)
+
+@app.route("/Addtransaction", methods=["GET", "POST"])
+def Addtransaction():
+    form = transactionForm()
+    if request.method == "POST":
+        if form.validate_on_submit():
+            selectedValue = request.form.get("transactionName")
+
+            entry = Transaction(transactionType=selectedValue)
+            db.session.add(entry)
+            db.session.commit()
+        transaction_name = request.form.get('transaction_name')
+
+    new_transaction = Transaction(transaction_name=transaction_name)
+    db.session.add(new_transaction)
+    db.session.commit()
+
+    return render_template("Addtransaction.html")
 
 
 if __name__ == '__main__':

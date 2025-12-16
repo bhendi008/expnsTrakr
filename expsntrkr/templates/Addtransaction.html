@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>add transaction</h1>
+
+    <form action="/Addtransaction" method="POST">
+        <div>
+            {{form.name.label}}<br>
+            {{form.name(size=30)}}
+        </div>
+        <label for="transaction_name">transaction name: </label>
+        <input type="text" name="transaction_name" required>
+        <label for="transaction_type">select transaction type:</label>
+        <select name="transactionName" id="transaction_type">
+        <option>small</option>
+        <option>medium</option>
+        <option>large</option>
+    </select>
+    <button type="submit">add transaction</button>
+    </form>
+    
+</body>
+</html>
