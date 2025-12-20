@@ -9,20 +9,16 @@
     <h1>add transaction</h1>
 
     <form action="/Addtransaction" method="POST">
-        <div>
-            {{form.name.label}}<br>
-            {{form.name(size=30)}}
-        </div>
-        <label for="transaction_name">transaction name: </label>
-        <input type="text" name="transaction_name" required>
-        <label for="transaction_type">select transaction type:</label>
-        <select name="transactionName" id="transaction_type">
-        <option>small</option>
-        <option>medium</option>
-        <option>large</option>
-    </select>
-    <button type="submit">add transaction</button>
+        <label>Add transaction: </label>
+        <input type="text" name="content" id="content">
+        <input type="submit" value="add task">
     </form>
-    
+    <br>
+
+    {% for transaction in transactions %}
+        <P>{{transaction.id}} {{transaction.content}}</p>
+    {% endfor %}
+
+    <a href="{{url_for('Dashboard')}}">Home</a>
 </body>
 </html>

@@ -2,7 +2,8 @@ from flask import Flask, redirect, render_template, url_for, request
 from flask_wtf import FlaskForm
 from wtforms.validators import InputRequired, Length, ValidationError, DataRequired
 from wtforms import StringField, PasswordField, SubmitField, SelectField
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy 
+import datetime
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required,current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_bcrypt import Bcrypt
@@ -10,6 +11,7 @@ from flask_bcrypt import Bcrypt
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///transactions"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "secretkey"
 
@@ -25,12 +27,15 @@ class User(UserMixin, db.Model):
 
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    transaction_name = db.Column(db.String(250))
+    content = db.Column(db.String(250), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.datetime.now)
+
+    def __repr__(self):
+        return '<task %r>' %self.id
 
 class transactionForm(FlaskForm):
-    transactionName = StringField("transaction_name")
-    submit = SubmitField("Add")
-    transactionType = SelectField('transaction type', choices=[], validators=[DataRequired()])
+    transaction = StringField(validators=(InputRequired(), Length(min=4,max=20)), render_kw={"placeholder":"transaction_name"}),
+    submit = SubmitField("addTransaction")
 
 class registerForm(FlaskForm):
     username = StringField(validators=(InputRequired(), Length(min=4,max=20)), render_kw={"placeholder":"username"}),
@@ -108,22 +113,21 @@ def Dashboard():
 
 @app.route("/Addtransaction", methods=["GET", "POST"])
 def Addtransaction():
-    form = transactionForm()
-    if request.method == "POST":
-        if form.validate_on_submit():
-            selectedValue = request.form.get("transactionName")
+    if request.method == 'POST':
+        transaction_content = request.form['content']
+        new_transaction = Transaction(content=transaction_content)
 
-            entry = Transaction(transactionType=selectedValue)
-            db.session.add(entry)
+        try:
+            db.session.add(new_transaction)
             db.session.commit()
-        transaction_name = request.form.get('transaction_name')
-
-    new_transaction = Transaction(transaction_name=transaction_name)
-    db.session.add(new_transaction)
-    db.session.commit()
-
+            return redirect('/Addtransaction')
+            return redirect('/home')
+        except:
+            return "error mofo"
+    else:
+        transactions = Transaction.query.order_by().all()
+        return render_template('Addtransaction.html', transactions=transactions)
     return render_template("Addtransaction.html")
-
 
 if __name__ == '__main__':
     app.run(debug=True)
