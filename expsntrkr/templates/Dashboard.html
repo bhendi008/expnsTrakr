@@ -16,6 +16,29 @@
         <a href="">view transaction summary</a>
     </nav>
     <br>
+    <button id="open">
+        click me
+    </button>
+    <div class="modal-container" id="modal_container">
+        <div class="modal">
+            <h1>add transaction</h1>
+
+            <form action="/Addtransaction" method="POST">
+                <label>Add transaction: </label>
+                <input type="text" name="content" id="content">
+                <input type="submit" value="add task">
+            </form>
+            <br>
+
+            {% for transaction in transactions %}
+                <P>{{transaction.id}} {{transaction.content}}</p>
+            {% endfor %}
+            
+            <button id="close">close</button>
+        </div>
+    </div>
+    <script src="static/popUp.js"></script>
+    
 
     <a href="/">Home</a>
     <br>

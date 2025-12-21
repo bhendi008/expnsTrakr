@@ -1,8 +1,11 @@
-* {
+*{
     box-sizing: border-box;
 }
 
-.modal-container{
+
+
+.modal-container {
+    background-color: rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,12 +19,14 @@
 }
 
 .modal-container.show {
+    pointer-events: auto;
     opacity: 1;
 }
 
 .modal{
-    background-color: grey;
+    background-color: white;
     padding: 30px 50px;
+    border-radius: 5px;
     width: 600px;
     max-width: 100%;
     text-align: center;

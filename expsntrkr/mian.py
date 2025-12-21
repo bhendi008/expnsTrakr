@@ -116,7 +116,6 @@ def Addtransaction():
     if request.method == 'POST':
         transaction_content = request.form['content']
         new_transaction = Transaction(content=transaction_content)
-
         try:
             db.session.add(new_transaction)
             db.session.commit()
