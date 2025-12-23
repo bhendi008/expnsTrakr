@@ -7,18 +7,34 @@
 </head>
 <body>
     <h1>add transaction</h1>
-
-    <form action="/Addtransaction" method="POST">
-        <label>Add transaction: </label>
-        <input type="text" name="content" id="content">
-        <input type="submit" value="add task">
-    </form>
+    <a href="{{url_for('Dashboard')}}">Home</a>
+    <br>
     <br>
 
-    {% for transaction in transactions %}
-        <P>{{transaction.id}} {{transaction.content}}</p>
-    {% endfor %}
-
-    <a href="{{url_for('Dashboard')}}">Home</a>
+    <form action="/Addtransaction" method="POST" enctype="multipart/form-data">
+        <label>Add transaction: </label>
+        <input type="text" name="content" id="content" required>
+        <p id="type">{{form.type.label}} {{form.type()}}</p>
+        <input type="submit" value="Submit">
+    </form>
+    <br>
+    <table>
+        <tr>
+            <th>transaction no.</th>
+            <th>transaction info</th>
+            <th>transaction type</th>
+            <th>actions</th>
+        </tr>
+        {% for transaction in transactions %}
+            <tr>
+                <td>{{transaction.id}}</td>
+                <td>{{transaction.content}}</td>
+                <td>{{form.type.data}}</td>
+                <td>
+                    <a href="/delete/{{transaction.id}}">delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>

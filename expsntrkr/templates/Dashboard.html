@@ -12,13 +12,13 @@
 
     <nav>
         <a href="/Addtransaction">add transaction</a>
-        <a href="">view transaction history</a>
-        <a href="">view transaction summary</a>
+        <a href="/transactionHistory">view transaction history</a>
+        <a href="/transactionSummary">view transaction summary</a>
     </nav>
     <br>
     <button id="open">
         click me
-    </button>
+    </button><br>
     <div class="modal-container" id="modal_container">
         <div class="modal">
             <h1>add transaction</h1>
@@ -30,9 +30,7 @@
             </form>
             <br>
 
-            {% for transaction in transactions %}
-                <P>{{transaction.id}} {{transaction.content}}</p>
-            {% endfor %}
+            
             
             <button id="close">close</button>
         </div>
