@@ -1,0 +1,5 @@
+[
+  "[{\"amount\": 12, \"content\": \"new\", \"date_created\": null, \"id\": 1, \"query\": null, \"query_class\": null, \"registry\": null, \"type\": \"small\"}]"
+][
+  "[{\"amount\": 12, \"content\": \"new\", \"date_created\": null, \"id\": 1, \"query\": null, \"query_class\": null, \"registry\": null, \"type\": \"small\"}, {\"amount\": 20, \"content\": \"added\", \"date_created\": null, \"id\": 2, \"query\": null, \"query_class\": null, \"registry\": null, \"type\": \"large\"}]"
+]

@@ -3,13 +3,17 @@ from flask_wtf import FlaskForm
 from flask_googlecharts import GoogleCharts
 from flask_googlecharts import BarChart
 from wtforms.validators import InputRequired, Length, ValidationError, DataRequired
-from wtforms import StringField, PasswordField, SubmitField, SelectField
-from flask_sqlalchemy import SQLAlchemy 
-import datetime
+from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerRangeField
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+from sqlalchemy.orm import sessionmaker
+import requests
 import json
+import datetime
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required,current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_bcrypt import Bcrypt
+
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -24,6 +28,20 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+class AlchemyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj.__class__, DeclarativeMeta):
+            fields = {}
+            for field in [x for x in dir(obj) if not x.startswith('_') and x != 'metadata']:
+                data = obj.__getattribute__(field)
+                try:
+                    json.dumps(data)
+                    fields[field] = data
+                except TypeError:
+                    fields[field] = None
+            return fields
+        return json.JSONEncoder.default(self, obj)
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(250), unique=True, nullable=False)
@@ -32,15 +50,11 @@ class User(UserMixin, db.Model):
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(250), nullable=False)
-    
     date_created = db.Column(db.DateTime, default=datetime.datetime.now)
-
-    def __repr__(self):
-        return '<task %r>' %self.id
+    amount = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.String(100), nullable=False)
 
 class transactionForm(FlaskForm):
-    transaction = StringField(validators=(InputRequired(), Length(min=4,max=20)), render_kw={"placeholder":"transaction_name"}),
-    type = SelectField('transactionType', choices=[('small', 'Small'),('medium','Medium'),('large','Large')])
     submit = SubmitField("Submit")
 
 class registerForm(FlaskForm):
@@ -119,24 +133,25 @@ def Dashboard():
 
 @app.route("/Addtransaction", methods=["GET", "POST"])
 def Addtransaction():
-    form = transactionForm()
-    if form.validate_on_submit():
-        type = form.type.data
-        return f'type: {type}'
     if request.method == 'POST':
         transaction_content = request.form['content']
-       
-        new_transaction = Transaction(content=transaction_content)
+        transaction_amount = request.form['amount']
+        transaction_type = request.form['type']
+        new_transaction = Transaction(content=transaction_content, amount=transaction_amount, type=transaction_type)
         try:
             db.session.add(new_transaction)
             db.session.commit()
             return redirect('/Addtransaction')
-            return redirect('/home')
         except:
             return "error mofo"
     else:
         transactions = Transaction.query.order_by().all()
-        return render_template('Addtransaction.html', transactions=transactions, form=form)
+        transaction_json = json.dumps(transactions, cls=AlchemyEncoder)
+        with open("data.json", "a") as f:
+            json.dump([transaction_json], f, indent=2)
+            print(transaction_json)
+                
+        return render_template('Addtransaction.html', transactions=transactions)
     return render_template("Addtransaction.html")
 
 @app.route('/delete/<int:id>')

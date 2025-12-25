@@ -7,8 +7,18 @@
 </head>
 <body>
     <h1>Transaction History</h1>
-    {% for transaction in transactions %}
-        <P>{{transaction.id}} {{transaction.content}}</p>
-    {% endfor %}
+    <table>
+        <tr>
+            <th>No.</th>
+            <th>Trnasaction</th>
+            <th>Amount</th>
+        </tr>
+        {% for transaction in transactions %}
+            <tr>
+                <td>{{transaction.id}}</td>
+                <td>{{transaction.content}}</td>
+            </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
