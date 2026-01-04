@@ -1,12 +1,10 @@
 from flask import Flask, redirect, render_template, url_for, request
 from flask_wtf import FlaskForm
-from flask_googlecharts import GoogleCharts
-from flask_googlecharts import BarChart
 from wtforms.validators import InputRequired, Length, ValidationError, DataRequired
 from wtforms import StringField, PasswordField, SubmitField, SelectField, IntegerRangeField
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
-from sqlalchemy.orm import sessionmaker
 import requests
 import json
 import datetime
@@ -17,7 +15,6 @@ from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
-charts = GoogleCharts(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///transactions"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -28,19 +25,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
-class AlchemyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj.__class__, DeclarativeMeta):
-            fields = {}
-            for field in [x for x in dir(obj) if not x.startswith('_') and x != 'metadata']:
-                data = obj.__getattribute__(field)
-                try:
-                    json.dumps(data)
-                    fields[field] = data
-                except TypeError:
-                    fields[field] = None
-            return fields
-        return json.JSONEncoder.default(self, obj)
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -133,6 +118,14 @@ def Dashboard():
 
 @app.route("/Addtransaction", methods=["GET", "POST"])
 def Addtransaction():
+    cat_q = db.session.query(Transaction.type, func.sum(Transaction.amount))
+
+    cat_rows = cat_q.group_by(Transaction.type).all()
+
+    cat_labels = [c for c, _ in cat_rows]
+    cat_values = [round(float(s or 0),2) for _, s in cat_rows]
+    print(cat_values)
+
     if request.method == 'POST':
         transaction_content = request.form['content']
         transaction_amount = request.form['amount']
@@ -146,13 +139,8 @@ def Addtransaction():
             return "error mofo"
     else:
         transactions = Transaction.query.order_by().all()
-        transaction_json = json.dumps(transactions, cls=AlchemyEncoder)
-        with open("data.json", "a") as f:
-            json.dump([transaction_json], f, indent=2)
-            print(transaction_json)
-                
-        return render_template('Addtransaction.html', transactions=transactions)
-    return render_template("Addtransaction.html")
+        return render_template('Addtransaction.html', transactions=transactions, cat_labels=cat_labels, cat_values=cat_values)
+
 
 @app.route('/delete/<int:id>')
 def delete(id):
@@ -166,9 +154,6 @@ def delete(id):
     except:
         return "error while deleting?? tsk tsk tsk:-("
 
-@app.route("/transactionSummary", methods=["POST", "GET"])
-def transactionSummary():
-    return render_template('transactionSummary.html', charts=charts)
 
 @app.route("/transactionHistory", methods=["POST", "GET"])
 def transactionHistory():

@@ -4,37 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 </head>
 <body>
     <h1>Charts</h1>
+    <p id="demo"></p>
     <div id="myChart" style="max-width: 700px; height:400px;"></div>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script>
-        google.charts.load('current', {packages:['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart(){
-            var data = google.visualization.arrayToDataTable([
-            ['piechart', 'number'],
-            ['pie', 75],
-            ['chart', 25]
-            ]);
-
-            var options = {
-                title: 'Is This Peak??',
-                slices: {
-                    0: { color: 'black'},
-                    1: {color: 'grey'}
-                }
-            };
-
-            var chart = new
-            google.visualization.PieChart(document.getElementById('myChart'));
-            chart.draw(data, options);
-
-        }
-    </script>
+    {% for transaction in transactions %}
+        <script>
+            document.getElementById("demo").innerHTML = "{{transaction.content}}"
+        </script>
+    {% endfor %}
 </body>
 </html>

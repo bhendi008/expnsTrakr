@@ -3,14 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css">
     <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        div{
+            height: 200px;
+            width: 200px;
+        }
+    </style>
 </head>
 <body>
     <h1>add transaction</h1>
-    <a href="{{url_for('Dashboard')}}">Home</a>
+    <nav>
+        <a href="/Dashboard" style="text-decoration: none;">Dashboard</a>
+        <a href="/Addtransaction" style="text-decoration: none;">add transaction</a>
+        <a href="/transactionHistory" style="text-decoration: none;">view transaction history</a>
+        <a href="/transactionSummary" style="text-decoration: none;">view transaction summary</a>
+        <a href="/" style="text-decoration: none;">Logout</a>
+    </nav>
     <br>
-    <br>
-
     <form action="/Addtransaction" method="POST" enctype="multipart/form-data">
         <label>Add transaction: </label>
         <input type="text" name="content" id="content" required><br>
@@ -22,10 +34,16 @@
             <option>large</option>
         </select>
         <br>
-        <br>
         <input type="submit" value="Submit">
         <br>
-        <table>
+        <label>sort by: </label>
+        <select name="type" id="type" required>
+            <option>all</option>
+            <option>small</option>
+            <option>medium</option>
+            <option>large</option>
+        </select>
+        <table style="width: 75%; margin-left: 175px;">
             <tr>
                 <th>transaction no.</th>
                 <th>transaction info</th>
@@ -35,16 +53,35 @@
             </tr>
             {% for transaction in transactions %}
                 <tr>
-                    <td>{{transaction.id}}</td>
-                    <td>{{transaction.content}}</td>
-                    <td>{{transaction.type}}</td>
-                    <td>{{transaction.amount}}$</td>
-                    <td>
+                    <td style="width: 10%;">{{transaction.id}}</td>
+                    <td style="text-align: center;">{{transaction.content}}</td>
+                    <td style="width: 10%;">{{transaction.type}}</td>
+                    <td style="width: 10%;">{{transaction.amount}}$</td>
+                    <td style="width: 10%;">
                         <a href="/delete/{{transaction.id}}">delete</a>
                     </td>
                 </tr>
             {% endfor %}
         </table>
+        <div>
+            <canvas id="piechart" height="140" width="140"></canvas>
+        </div>
+        
     </form>
+    
+    <script>
+        const catLabels = {{(cat_labels or []) | tojson}};
+        const catValues = {{(cat_values or []) | tojson}};
+
+        if (document.getElementById('piechart')){
+            const catCtx = document.getElementById('piechart').getContext('2d')
+
+            new Chart(catCtx, {
+                type: 'pie',
+                data: {labels: catLabels, datasets:[{data: catValues}]},
+                option: {plugins: {legend: {labels: {color: '#cbd5e1'}}}}
+            });
+        }
+    </script>
 </body>
 </html>

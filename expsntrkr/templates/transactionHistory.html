@@ -3,20 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/styles.css">
     <title>Document</title>
 </head>
 <body>
     <h1>Transaction History</h1>
-    <table>
+    <nav>
+        <a href="/Dashboard" style="text-decoration: none;">Dashboard</a>
+        <a href="/Addtransaction" style="text-decoration: none;">add transaction</a>
+        <a href="/transactionHistory" style="text-decoration: none;">view transaction history</a>
+        <a href="/transactionSummary" style="text-decoration: none;">view transaction summary</a>
+    </nav>
+    <br>
+    <table style="width: 99%;">
         <tr>
             <th>No.</th>
             <th>Trnasaction</th>
+            <th>Type</th>
             <th>Amount</th>
+            <th>Actions</th>
         </tr>
         {% for transaction in transactions %}
-            <tr>
-                <td>{{transaction.id}}</td>
-                <td>{{transaction.content}}</td>
+            <tr style="height:100px; font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;">
+                <td style="font-size: 20px;">{{transaction.id}}</td>
+                <td style="font-size: 20px; text-align:center;">{{transaction.content}}</td>
+                <td style="width: 10%; font-size: 20px;">{{transaction.type}}</td>
+                <td style="width: 10%; font-size: 20px;">{{transaction.amount}}$</td>
+                <td style="width: 10%; font-size: 20px;">
+                    <a href="/delete/{{transaction.id}}">delete</a>
+                </td>
             </tr>
         {% endfor %}
     </table>

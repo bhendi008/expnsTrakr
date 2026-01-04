@@ -4,44 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        a{
+            color:mediumslateblue;
+        }
+    </style>
     
     <title>Document</title>
 </head>
 <body>
-     <h1>The dev is lazy!! Deal with it!!!!</h1>
-
-    <nav>
-        <a href="/Addtransaction">add transaction</a>
-        <a href="/transactionHistory">view transaction history</a>
-        <a href="/transactionSummary">view transaction summary</a>
-    </nav>
-    <br>
-    <button id="open">
-        click me
-    </button><br>
-    <div class="modal-container" id="modal_container">
-        <div class="modal">
-            <h1>add transaction</h1>
-
-            <form action="/Addtransaction" method="POST">
-                <label>Add transaction: </label>
-                <input type="text" name="content" id="content">
-                <input type="submit" value="add task">
-            </form>
+    <div id="container">
+        <div class="box">
+            <h1 class="headings">The dev is lazy!! Deal with it!!!!</h1>
+            <nav>
+                <a href="/Addtransaction" style="text-decoration: none;">add transaction</a>
+                <a href="/transactionHistory" style="text-decoration: none;">view transaction history</a>
+                <a href="/transactionSummary" style="text-decoration: none;">view transaction summary</a>
+            </nav>
             <br>
+            <button id="open">
+                quick add
+            </button><br>
+            <div class="modal-container" id="modal_container">
+                <div class="modal">
+                    <h1>add transaction</h1>
 
+                    <form action="/Addtransaction" method="POST">
+                        <label>Add transaction: </label>
+                        <input type="text" name="content" id="content" required><br>
+                        <label>Amount: </label>
+                        <input type="number" name="amount" id="amount" required>
+                        <select name="type" id="type" required>
+                            <option>small</option>
+                            <option>medium</option>
+                            <option>large</option>
+                        </select>
+                        <input type="submit" value="add transaction">
+                    </form>
+                    <br>
+                    
+                    <button id="close">X</button>
+                </div>
+            </div>
+            <script src="static/popUp.js"></script>
             
-            
-            <button id="close">close</button>
+            <a href="/" style="text-decoration: none;">Logout</a>
+        </div>
+        <br>
+        <div class="box">
+            <h1>Cards</h1>
         </div>
     </div>
-    <script src="static/popUp.js"></script>
-    
-
-    <a href="/">Home</a>
-    <br>
-    <a href="/Register">Register</a>
-    <br>
-    <a href="/Login">Login</a>
 </body>
 </html>

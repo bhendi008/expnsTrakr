@@ -31,3 +31,39 @@
     max-width: 100%;
     text-align: center;
 }
+body{
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 15px;
+}
+h1{
+    font-size: 100px;
+    font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+.box{
+    align-items: center;
+    text-align: center;
+    align-content: center;
+    border: 2px solid black;
+    height: 95vh;
+    width: 98%;
+    padding: 100px;
+    margin: 10px;
+    border-radius: 7px;
+    box-shadow: 10px 10px lightgrey;
+}
+table{
+    margin: 10px;
+    border-radius: 7px;
+    box-shadow: 10px 10px lightgrey;
+}
+td, th{
+    border-radius: 5px;
+}
+tr{
+    border-radius: 5px;
+    background-color: lightblue;
+}
+.dark-mode {
+    background-color: black;
+    color: white;
+}
